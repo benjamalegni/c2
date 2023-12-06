@@ -5,15 +5,14 @@ type puntarbol=^tipoarbol;
                   nro     : integer;
                   menores : puntarbol;
                   mayores : puntarbol;
-                  padre   : puntarbol
                end;
 
 var arbol,nod:puntarbol;
 
-procedure insertarnodo(var arbol : puntarbol;nod,padre:puntarbol);
+procedure insertarnodo(var arbol : puntarbol;nod:puntarbol);
 begin
    if arbol=nil then
-      arbol:=crearnodo(nod,padre)
+      arbol:=crearnodo(nod)
    else
       if (nod^.nro>arbol^.nro) then
          insertarnodo(arbol^.mayores,nod,arbol)
@@ -22,22 +21,20 @@ begin
          insertarnodo(arbol^.menores,nod,arbol)
 end;
 
-procedure crearnodo(var nod,padre:puntarbol );
+procedure crearnodo(var nod:puntarbol );
 begin
    new(nod);
    writeln('ingrese numero del arbol');
    readln(nod^.nro);
    nod^.menores:=nil;
    nod^.mayores:=nil;
-   nod^.padre:=padre;
 end;
 
 procedure creacion(var nod,arbol :puntarbol);
 begin
    crearnodo(nod);
-   nod^.padre:=nil;
    while (nod^.nro<>-1) do begin
-      insertarnodo(arbol,nod,padre);
+      insertarnodo(arbol,nod);
       crearnodo(nod);
    end;
 end;
@@ -64,28 +61,30 @@ readln(nro);
 
 
 
-function buscarnro(arbol : puntarbol):puntarbol;
+procedure buscarnro(arbol : puntarbol);
 var nro : integer;
+   temp : puntarbol
 begin
    writeln('ingrese nro');
    readln(nro);
-   if (arbol^.nro=nro) then
-      buscarnro:=arbol
+   if (arbol^.mayores.nro=nro) then
+      begin
+      temp:=arbol^.mayores
+      dispose(arbol^.mayores)
+         end
       else
-         if (nro>arbol^.nro) then
-            buscarnro:=buscarnro(arbol^.mayores)
-            else
-               if (nro<arbol^.nro) then
-                  buscarnro:=buscarnro(arbol^.menores);
+   if (arbol^.menores.nro=nro) then
+      dispose(arbol^.menores)
+      else
+   if (nro<arbol^.nro) then
+      buscarnro(arbol^.menores)
+      else
+         if (nro<arbol^.nro) then
+            buscarnro(arbol^.mayores);
+
 end;
 
 
-
-procedure eliminar (var arbol : puntarbol ; valor:integer);
-begin
-   if arbol=nil then
-      arbol:=nil
-end;
 
 
 begin
